@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haunted Terminal | Ghost Shell Whisperer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="crt-overlay"></div>
+    <div class="terminal-container">
+        <header class="terminal-header">
+            <div class="buttons">
+                <span class="btn close"></span>
+                <span class="btn minimize"></span>
+                <span class="btn maximize"></span>
+            </div>
+            <div class="title">ghost-shell@haunted-machine:~ (local-ai)</div>
+        </header>
+        
+        <div class="terminal-body" id="terminalBody">
+            <div class="welcome-banner">
+                <p>👻 GHOST SHELL WHISPERER v1.0.4 [Hacktoberfest Special]</p>
+                <p>Local-First Open-Source AI Terminal Companion</p>
+                <p class="dim">Type commands below (e.g., <span class="highlight">git status</span>, <span class="highlight">npm install</span>, <span class="highlight">ls -la</span>, <span class="highlight">help</span>) to awaken the spirit...</p>
+                <br>
+            </div>
+            <div id="outputLog"></div>
+            <div class="input-line">
+                <span class="prompt">guest@haunted:~$</span>
+                <input type="text" id="commandInput" autofocus autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('commandInput');
+        const outputLog = document.getElementById('outputLog');
+        const terminalBody = document.getElementById('terminalBody');
+
+        const spookyResponses = {
+            "git status": "⚠️ 3 modified files detected... just like the 3 lingering spirits in your hallway. Are you brave enough to commit them?",
+            "npm install": "🕯️ Summoning unverified packages from the digital void... Hope you checked their package.json for curses.",
+            "ls -la": "👁️ You uncovered hidden files... and something in the shadows is watching you look back.",
+            "clear": "💨 The ghost cleared the screen, but it remembers what you typed in the dark...",
+            "help": "🔮 Available spells: git status, npm install, ls -la, clear, whoami, touch grass.",
+            "whoami": "👻 You are merely a temporary tenant in a machine haunted by ancient open-source commits.",
+            "touch grass": "🌿 The ghost hisses at the mention of sunlight and forces you back into your IDE."
+        };
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const cmd = input.value.trim();
+                if (!cmd) return;
+
+                // Append user command
+                const userLine = document.createElement('div');
+                userLine.className = 'log-entry';
+                userLine.innerHTML = `<span class="prompt">guest@haunted:~$</span> ${escapeHtml(cmd)}`;
+                outputLog.appendChild(userLine);
+
+                // Generate AI spooky response
+                const aiLine = document.createElement('div');
+                aiLine.className = 'log-entry ai-whisper';
+                
+                let response = spookyResponses[cmd.toLowerCase()] || `👻 The machine groans... "${cmd}" echoes hollowly in the offline ether. No closed cloud server heard your plea.`;
+                aiLine.innerHTML = `<span>${response}</span>`;
+                outputLog.appendChild(aiLine);
+
+                input.value = '';
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+            }
+        });
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+    </script>
+</body>
+</html>
