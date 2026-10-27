@@ -15,14 +15,14 @@
                 <span class="btn minimize"></span>
                 <span class="btn maximize"></span>
             </div>
-            <div class="title">ghost-shell@haunted-machine:~ (local-ai)</div>
+            <div class="title">ghost-shell@haunted-machine:~ (local-ai-audio)</div>
         </header>
         
         <div class="terminal-body" id="terminalBody">
             <div class="welcome-banner">
-                <p>👻 GHOST SHELL WHISPERER v1.0.4 [Hacktoberfest Special]</p>
-                <p>Local-First Open-Source AI Terminal Companion</p>
-                <p class="dim">Type commands below (e.g., <span class="highlight">git status</span>, <span class="highlight">npm install</span>, <span class="highlight">ls -la</span>, <span class="highlight">help</span>, <span class="highlight">sudo</span>, <span class="highlight">hack</span>) to awaken the spirit...</p>
+                <p>👻 GHOST SHELL WHISPERER v1.0.5 [Speech-Enabled Edition]</p>
+                <p>Local-First Open-Source AI Terminal Companion with Voice Whispers</p>
+                <p class="dim">Type commands below (e.g., <span class="highlight">git status</span>, <span class="highlight">npm install</span>, <span class="highlight">ls -la</span>, <span class="highlight">help</span>, <span class="highlight">sudo</span>, <span class="highlight">hack</span>) and listen to the spirits...</p>
                 <br>
             </div>
             <div id="outputLog"></div>
@@ -50,6 +50,35 @@
             "hack": "💻 Injecting ghost payload into mainframe... Connection lost to the living world."
         };
 
+        // Text-to-Speech function for ghostly voice whispers
+        function speakWhisper(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.85; // Slightly slower for a spooky eerie effect
+                utterance.pitch = 0.6;  // Lower pitch for a deeper, haunting tone
+                utterance.volume = 1.0;
+
+                // Try to find a creepy or English voice if available
+                const voices = window.speechSynthesis.getVoices();
+                const selectedVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('UK English')));
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Ensure voices are loaded
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
         input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const cmd = input.value.trim();
@@ -61,13 +90,16 @@
                 userLine.innerHTML = `<span class="prompt">guest@haunted:~$</span> ${escapeHtml(cmd)}`;
                 outputLog.appendChild(userLine);
 
-                // Generate AI spooky response
+                // Generate AI spooky response & speak it
                 const aiLine = document.createElement('div');
                 aiLine.className = 'log-entry ai-whisper';
                 
                 let response = spookyResponses[cmd.toLowerCase()] || `👻 The machine groans... "${cmd}" echoes hollowly in the offline ether. No closed cloud server heard your plea.`;
                 aiLine.innerHTML = `<span>${response}</span>`;
                 outputLog.appendChild(aiLine);
+
+                // Trigger voice whisper
+                speakWhisper(response);
 
                 input.value = '';
                 terminalBody.scrollTop = terminalBody.scrollHeight;
