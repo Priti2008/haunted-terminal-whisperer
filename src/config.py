@@ -3,3 +3,4 @@ quote_generator = True
 background_haunt = True
 encrypted_logs = True
 dedup_filter = True
+DEBUG = False
